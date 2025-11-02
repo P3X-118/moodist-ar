@@ -20,11 +20,11 @@ SPDX-License-Identifier: AGPL-3.0-or-later
 
 # Setting up Moodist
 
-This is an [Ansible](https://www.ansible.com/) role which installs [Moodist](https://moodist.org) to run as a [Docker](https://www.docker.com/) container wrapped in a systemd service.
+This is an [Ansible](https://www.ansible.com/) role which installs [Moodist](https://moodist.mvze.net) to run as a [Docker](https://www.docker.com/) container wrapped in a systemd service.
 
 Moodist is an in-memory key-value store for small arbitrary data (strings, objects) from results of database calls, API calls, or page rendering.
 
-See the project's [documentation](https://docs.moodist.org/) to learn what Moodist does and why it might be useful to you.
+See the project's [documentation](https://github.com/remvze/moodist/blob/main/README.md) to learn what Moodist does and why it might be useful to you.
 
 ## Adjusting the playbook configuration
 
@@ -85,8 +85,6 @@ If you use the MASH playbook, the shortcut commands with the [`just` program](ht
 ## Usage
 
 After running the command for installation, Moodist becomes available internally to other services on the same network. If the service is exposed to the internet, it becomes available at the specified hostname like `https://example.com`.
-
-See [this page](https://docs.moodist.org/userguide/) on the documentation about its usage.
 
 ## Troubleshooting
 
