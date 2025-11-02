@@ -18,51 +18,51 @@ SPDX-FileCopyrightText: 2024, 2025 Suguru Hirahara
 SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 
-# Setting up Memcached
+# Setting up Moodist
 
-This is an [Ansible](https://www.ansible.com/) role which installs [Memcached](https://memcached.org) to run as a [Docker](https://www.docker.com/) container wrapped in a systemd service.
+This is an [Ansible](https://www.ansible.com/) role which installs [Moodist](https://moodist.org) to run as a [Docker](https://www.docker.com/) container wrapped in a systemd service.
 
-Memcached is an in-memory key-value store for small arbitrary data (strings, objects) from results of database calls, API calls, or page rendering.
+Moodist is an in-memory key-value store for small arbitrary data (strings, objects) from results of database calls, API calls, or page rendering.
 
-See the project's [documentation](https://docs.memcached.org/) to learn what Memcached does and why it might be useful to you.
+See the project's [documentation](https://docs.moodist.org/) to learn what Moodist does and why it might be useful to you.
 
 ## Adjusting the playbook configuration
 
-To enable Memcached with this role, add the following configuration to your `vars.yml` file.
+To enable Moodist with this role, add the following configuration to your `vars.yml` file.
 
 **Note**: the path should be something like `inventory/host_vars/mash.example.com/vars.yml` if you use the [MASH Ansible playbook](https://github.com/mother-of-all-self-hosting/mash-playbook).
 
 ```yaml
 ########################################################################
 #                                                                      #
-# memcached                                                            #
+# moodist                                                              #
 #                                                                      #
 ########################################################################
 
-memcached_enabled: true
+moodist_enabled: true
 
 ########################################################################
 #                                                                      #
-# /memcached                                                           #
+# /moodist                                                             #
 #                                                                      #
 ########################################################################
 ```
 
 ### Exposing the instance (optional)
 
-By default, the Memcached instance is not exposed externally, as it is mainly intended to be used in the internal network, connected to other services.
+By default, the Moodist instance is not exposed externally, as it is mainly intended to be used in the internal network, connected to other services.
 
 To expose it to the internet, add the following configuration to your `vars.yml` file. Make sure to replace `example.com` with your own value.
 
 ```yaml
-memcached_hostname: "example.com"
+moodist_hostname: "example.com"
 
-memcached_container_labels_traefik_enabled: true
+moodist_container_labels_traefik_enabled: true
 ```
 
 After adjusting the hostname, make sure to adjust your DNS records to point the domain to your server.
 
-**Note**: hosting Memcached under a subpath (by configuring the `memcached_path_prefix` variable) does not seem to be possible due to Memcached's technical limitations.
+**Note**: hosting Moodist under a subpath (by configuring the `moodist_path_prefix` variable) does not seem to be possible due to Moodist's technical limitations.
 
 ### Extending the configuration
 
@@ -70,7 +70,7 @@ There are some additional things you may wish to configure about the component.
 
 Take a look at:
 
-- [`defaults/main.yml`](../defaults/main.yml) for some variables that you can customize via your `vars.yml` file. You can override settings (even those that don't have dedicated playbook variables) using the `memcached_environment_variables_additional_variables` variable
+- [`defaults/main.yml`](../defaults/main.yml) for some variables that you can customize via your `vars.yml` file. You can override settings (even those that don't have dedicated playbook variables) using the `moodist_environment_variables_additional_variables` variable
 
 ## Installing
 
@@ -84,12 +84,12 @@ If you use the MASH playbook, the shortcut commands with the [`just` program](ht
 
 ## Usage
 
-After running the command for installation, Memcached becomes available internally to other services on the same network. If the service is exposed to the internet, it becomes available at the specified hostname like `https://example.com`.
+After running the command for installation, Moodist becomes available internally to other services on the same network. If the service is exposed to the internet, it becomes available at the specified hostname like `https://example.com`.
 
-See [this page](https://docs.memcached.org/userguide/) on the documentation about its usage.
+See [this page](https://docs.moodist.org/userguide/) on the documentation about its usage.
 
 ## Troubleshooting
 
 ### Check the service's logs
 
-You can find the logs in [systemd-journald](https://www.freedesktop.org/software/systemd/man/systemd-journald.service.html) by logging in to the server with SSH and running `journalctl -fu memcached` (or how you/your playbook named the service, e.g. `mash-memcached`).
+You can find the logs in [systemd-journald](https://www.freedesktop.org/software/systemd/man/systemd-journald.service.html) by logging in to the server with SSH and running `journalctl -fu moodist` (or how you/your playbook named the service, e.g. `mash-moodist`).

@@ -5,24 +5,24 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
 ---
-- name: Perform Memcached installation tasks
-  when: memcached_enabled | bool
+- name: Perform Moodist installation tasks
+  when: moodist_enabled | bool
   tags:
     - setup-all
-    - setup-memcached
+    - setup-moodist
     - install-all
-    - install-memcached
+    - install-moodist
   block:
-    - name: Validate Memcached configuration
+    - name: Validate Moodist configuration
       ansible.builtin.include_tasks: "{{ role_path }}/tasks/validate_config.yml"
-    - name: Install Memcached
+    - name: Install Moodist
       ansible.builtin.include_tasks: "{{ role_path }}/tasks/install.yml"
 
-- name: Perform Memcached uninstallation tasks
-  when: not memcached_enabled | bool
+- name: Perform Moodist uninstallation tasks
+  when: not moodist_enabled | bool
   tags:
     - setup-all
-    - setup-memcached
+    - setup-moodist
   block:
-    - name: Uninstall Memcached
+    - name: Uninstall Moodist
       ansible.builtin.include_tasks: "{{ role_path }}/tasks/uninstall.yml"

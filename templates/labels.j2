@@ -6,55 +6,55 @@ SPDX-FileCopyrightText: 2025 Suguru Hirahara
 SPDX-License-Identifier: AGPL-3.0-or-later
 #}
 
-{% if memcached_container_labels_traefik_enabled %}
+{% if moodist_container_labels_traefik_enabled %}
 traefik.enable=true
 
-{% if memcached_container_labels_traefik_docker_network %}
-traefik.docker.network={{ memcached_container_labels_traefik_docker_network }}
+{% if moodist_container_labels_traefik_docker_network %}
+traefik.docker.network={{ moodist_container_labels_traefik_docker_network }}
 {% endif %}
 
 {% set middlewares = [] %}
 
-{% if memcached_container_labels_traefik_path_prefix != '/' %}
-traefik.http.middlewares.{{ memcached_identifier }}-slashless-redirect.redirectregex.regex=^({{ memcached_container_labels_traefik_path_prefix | quote }})$
-traefik.http.middlewares.{{ memcached_identifier }}-slashless-redirect.redirectregex.replacement=${1}/
-{% set middlewares = middlewares + [memcached_identifier + '-slashless-redirect'] %}
+{% if moodist_container_labels_traefik_path_prefix != '/' %}
+traefik.http.middlewares.{{ moodist_identifier }}-slashless-redirect.redirectregex.regex=^({{ moodist_container_labels_traefik_path_prefix | quote }})$
+traefik.http.middlewares.{{ moodist_identifier }}-slashless-redirect.redirectregex.replacement=${1}/
+{% set middlewares = middlewares + [moodist_identifier + '-slashless-redirect'] %}
 {% endif %}
 
-{% if memcached_container_labels_traefik_path_prefix != '/' %}
-traefik.http.middlewares.{{ memcached_identifier }}-strip-prefix.stripprefix.prefixes={{ memcached_container_labels_traefik_path_prefix }}
-{% set middlewares = middlewares + [memcached_identifier + '-strip-prefix'] %}
+{% if moodist_container_labels_traefik_path_prefix != '/' %}
+traefik.http.middlewares.{{ moodist_identifier }}-strip-prefix.stripprefix.prefixes={{ moodist_container_labels_traefik_path_prefix }}
+{% set middlewares = middlewares + [moodist_identifier + '-strip-prefix'] %}
 {% endif %}
 
-{% if memcached_container_labels_traefik_additional_request_headers.keys() | length > 0 %}
-{% for name, value in memcached_container_labels_traefik_additional_request_headers.items() %}
-traefik.http.middlewares.{{ memcached_identifier }}-add-request-headers.headers.customrequestheaders.{{ name }}={{ value }}
+{% if moodist_container_labels_traefik_additional_request_headers.keys() | length > 0 %}
+{% for name, value in moodist_container_labels_traefik_additional_request_headers.items() %}
+traefik.http.middlewares.{{ moodist_identifier }}-add-request-headers.headers.customrequestheaders.{{ name }}={{ value }}
 {% endfor %}
-{% set middlewares = middlewares + [memcached_identifier + '-add-request-headers'] %}
+{% set middlewares = middlewares + [moodist_identifier + '-add-request-headers'] %}
 {% endif %}
 
-{% if memcached_container_labels_traefik_additional_response_headers.keys() | length > 0 %}
-{% for name, value in memcached_container_labels_traefik_additional_response_headers.items() %}
-traefik.http.middlewares.{{ memcached_identifier }}-add-response-headers.headers.customresponseheaders.{{ name }}={{ value }}
+{% if moodist_container_labels_traefik_additional_response_headers.keys() | length > 0 %}
+{% for name, value in moodist_container_labels_traefik_additional_response_headers.items() %}
+traefik.http.middlewares.{{ moodist_identifier }}-add-response-headers.headers.customresponseheaders.{{ name }}={{ value }}
 {% endfor %}
-{% set middlewares = middlewares + [memcached_identifier + '-add-response-headers'] %}
+{% set middlewares = middlewares + [moodist_identifier + '-add-response-headers'] %}
 {% endif %}
 
-traefik.http.routers.{{ memcached_identifier }}.rule={{ memcached_container_labels_traefik_rule }}
-{% if memcached_container_labels_traefik_priority | int > 0 %}
-traefik.http.routers.{{ memcached_identifier }}.priority={{ memcached_container_labels_traefik_priority }}
+traefik.http.routers.{{ moodist_identifier }}.rule={{ moodist_container_labels_traefik_rule }}
+{% if moodist_container_labels_traefik_priority | int > 0 %}
+traefik.http.routers.{{ moodist_identifier }}.priority={{ moodist_container_labels_traefik_priority }}
 {% endif %}
-traefik.http.routers.{{ memcached_identifier }}.service={{ memcached_identifier }}
+traefik.http.routers.{{ moodist_identifier }}.service={{ moodist_identifier }}
 {% if middlewares | length > 0 %}
-traefik.http.routers.{{ memcached_identifier }}.middlewares={{ middlewares | join(',') }}
+traefik.http.routers.{{ moodist_identifier }}.middlewares={{ middlewares | join(',') }}
 {% endif %}
-traefik.http.routers.{{ memcached_identifier }}.entrypoints={{ memcached_container_labels_traefik_entrypoints }}
-traefik.http.routers.{{ memcached_identifier }}.tls={{ memcached_container_labels_traefik_tls | to_json }}
-{% if memcached_container_labels_traefik_tls %}
-traefik.http.routers.{{ memcached_identifier }}.tls.certResolver={{ memcached_container_labels_traefik_tls_certResolver }}
-{% endif %}
-
-traefik.http.services.{{ memcached_identifier }}.loadbalancer.server.port={{ memcached_container_http_port }}
+traefik.http.routers.{{ moodist_identifier }}.entrypoints={{ moodist_container_labels_traefik_entrypoints }}
+traefik.http.routers.{{ moodist_identifier }}.tls={{ moodist_container_labels_traefik_tls | to_json }}
+{% if moodist_container_labels_traefik_tls %}
+traefik.http.routers.{{ moodist_identifier }}.tls.certResolver={{ moodist_container_labels_traefik_tls_certResolver }}
 {% endif %}
 
-{{ memcached_container_labels_additional_labels }}
+traefik.http.services.{{ moodist_identifier }}.loadbalancer.server.port={{ moodist_container_http_port }}
+{% endif %}
+
+{{ moodist_container_labels_additional_labels }}
