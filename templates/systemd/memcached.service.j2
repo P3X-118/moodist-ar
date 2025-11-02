@@ -1,0 +1,56 @@
+{#
+SPDX-FileCopyrightText: 2024 Julian-Samuel Gebühr
+SPDX-FileCopyrightText: 2025 Suguru Hirahara
+
+SPDX-License-Identifier: AGPL-3.0-or-later
+#}
+
+[Unit]
+Description=Memcached ({{ memcached_identifier }})
+{% for service in memcached_systemd_required_services_list %}
+Requires={{ service }}
+After={{ service }}
+{% endfor %}
+{% for service in memcached_systemd_wanted_services_list %}
+Wants={{ service }}
+{% endfor %}
+DefaultDependencies=no
+
+[Service]
+Type=simple
+ExecStartPre=-{{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_systemd_docker_base_host_command_docker }} stop -t {{ devture_systemd_docker_base_container_stop_grace_time_seconds }} {{ memcached_identifier }} 2>/dev/null || true'
+ExecStartPre=-{{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_systemd_docker_base_host_command_docker }} rm {{ memcached_identifier }} 2>/dev/null || true'
+
+ExecStartPre={{ devture_systemd_docker_base_host_command_docker }} create \
+      --rm \
+      --name={{ memcached_identifier }} \
+      --log-driver=none \
+      --user={{ memcached_uid }}:{{ memcached_gid }} \
+      --cap-drop=ALL \
+      --read-only \
+      --network={{ memcached_container_network }} \
+      {% if memcached_container_http_host_bind_port %}
+      -p {{ memcached_container_http_host_bind_port }}:{{ memcached_container_http_port }} \
+      {% endif %}
+      --env-file={{ memcached_base_path }}/env  \
+      --label-file={{ memcached_base_path }}/labels \
+      {% for volume in memcached_container_additional_volumes %}
+      --mount type={{ volume.type | default('bind' if '/' in volume.src else 'volume') }},src={{ volume.src }},dst={{ volume.dst }}{{ (',' + volume.options) if volume.options else '' }} \
+      {% endfor %}
+      {{ memcached_container_image_self_build_name if memcached_container_image_self_build else memcached_container_image }}
+
+{% for network in memcached_container_additional_networks %}
+ExecStartPre={{ devture_systemd_docker_base_host_command_docker }} network connect {{ network }} {{ memcached_identifier }}
+{% endfor %}
+
+ExecStart={{ devture_systemd_docker_base_host_command_docker }} start --attach {{ memcached_identifier }}
+
+ExecStop=-{{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_systemd_docker_base_host_command_docker }} stop -t {{ devture_systemd_docker_base_container_stop_grace_time_seconds }} {{ memcached_identifier }} 2>/dev/null || true'
+ExecStop=-{{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_systemd_docker_base_host_command_docker }} rm {{ memcached_identifier }} 2>/dev/null || true'
+
+Restart=always
+RestartSec=30
+SyslogIdentifier={{ memcached_identifier }}
+
+[Install]
+WantedBy=multi-user.target
