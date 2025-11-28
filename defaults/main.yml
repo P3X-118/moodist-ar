@@ -15,9 +15,8 @@ moodist_enabled: true
 moodist_identifier: moodist
 moodist_base_path: "/{{ moodist_identifier }}"
 
-# Note: Change "moodist_container_image_self_build_dockerfile" when updating
-# renovate: datasource=docker depName=moodist versioning=semver
-moodist_version: 1.6.39
+# renovate: datasource=docker depName=ghcr.io/remvze/moodist
+moodist_version: v2.1.0
 
 moodist_uid: ""
 moodist_gid: ""
@@ -27,18 +26,17 @@ moodist_hostname: ""
 
 moodist_path_prefix: /
 
-moodist_container_image: "{{ moodist_container_image_registry_prefix }}moodist:{{ moodist_container_image_tag }}"
+moodist_container_image: "{{ moodist_container_image_registry_prefix }}remvze/moodist:{{ moodist_container_image_tag }}"
 moodist_container_image_tag: "{{ moodist_version }}"
 moodist_container_image_registry_prefix: "{{ moodist_container_image_registry_prefix_upstream }}"
 moodist_container_image_registry_prefix_upstream: "{{ moodist_container_image_registry_prefix_upstream_default }}"
-moodist_container_image_registry_prefix_upstream_default: docker.io/
+moodist_container_image_registry_prefix_upstream_default: ghcr.io/
 moodist_container_image_force_pull: "{{ moodist_container_image.endswith(':latest') }}"
 
 moodist_container_image_self_build: false
-moodist_container_image_self_build_name: "docker-library/moodist:{{ moodist_container_image_self_build_repo_version }}"
-moodist_container_image_self_build_repo: "https://github.com/docker-library/moodist.git"
-moodist_container_image_self_build_repo_version: "master"
-moodist_container_image_self_build_dockerfile: "1/debian/Dockerfile"
+moodist_container_image_self_build_name: "remvze/moodist:{{ moodist_container_image_self_build_repo_version }}"
+moodist_container_image_self_build_repo: "https://github.com/remvze/moodist.git"
+moodist_container_image_self_build_repo_version: "{{ moodist_version if moodist_version != 'latest' else 'main' }}"
 moodist_container_image_self_build_src_files_path: "{{ moodist_base_path }}/docker-src"
 
 # Controls whether the Moodist container exposes its HTTP port (as defined by `moodist_container_http_port`).
