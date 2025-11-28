@@ -72,7 +72,7 @@ moodist_container_additional_volumes_custom: []
 # See `../templates/labels.j2` for details.
 #
 # To inject your own other container labels, see `moodist_container_labels_additional_labels`.
-moodist_container_labels_traefik_enabled: false
+moodist_container_labels_traefik_enabled: true
 moodist_container_labels_traefik_docker_network: "{{ moodist_container_network }}"
 moodist_container_labels_traefik_hostname: "{{ moodist_hostname }}"
 # The path prefix must either be `/` or not end with a slash (e.g. `/moodist`).

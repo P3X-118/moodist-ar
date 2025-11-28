@@ -48,16 +48,12 @@ moodist_enabled: true
 ########################################################################
 ```
 
-### Exposing the instance (optional)
+### Set the hostname
 
-By default, the Moodist instance is not exposed externally, as it is mainly intended to be used in the internal network, connected to other services.
-
-To expose it to the internet, add the following configuration to your `vars.yml` file. Make sure to replace `example.com` with your own value.
+To enable Moodist you need to set the hostname as well. To do so, add the following configuration to your `vars.yml` file. Make sure to replace `example.com` with your own value.
 
 ```yaml
 moodist_hostname: "example.com"
-
-moodist_container_labels_traefik_enabled: true
 ```
 
 After adjusting the hostname, make sure to adjust your DNS records to point the domain to your server.
