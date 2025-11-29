@@ -22,7 +22,7 @@ SPDX-License-Identifier: AGPL-3.0-or-later
 
 This is an [Ansible](https://www.ansible.com/) role which installs [Moodist](https://moodist.mvze.net) to run as a [Docker](https://www.docker.com/) container wrapped in a systemd service.
 
-Moodist is an in-memory key-value store for small arbitrary data (strings, objects) from results of database calls, API calls, or page rendering.
+Moodist is a free web application to mix and play ambient soundtracks (river, rain, cafe, airport, etc).
 
 See the project's [documentation](https://github.com/remvze/moodist/blob/main/README.md) to learn what Moodist does and why it might be useful to you.
 
