@@ -60,6 +60,16 @@ After adjusting the hostname, make sure to adjust your DNS records to point the 
 
 **Note**: hosting Moodist under a subpath (by configuring the `moodist_path_prefix` variable) does not seem to be possible due to Moodist's technical limitations.
 
+### Using the default Docker image (optional)
+
+Since the service uses the nginx Docker image inside the container by default (see [this line](https://github.com/remvze/moodist/blob/aa2b47ace4242d2bcf687ddab12fa4c258d0c7f7/Dockerfile#L8-L10) on `Dockerfile`) as suggested on [the documentation of Astro](https://docs.astro.build/en/recipes/docker/#nginx) and therefore requires to use the root user, this role is configured to build the image on the source code with [this Dockerfile](../templates/Dockerfile.j2) in order to serve the application with [`http-server`](https://www.npmjs.com/package/http-server), which runs as non-root user without any additional capabilities.
+
+If you prefer simply using [the official Docker image](https://github.com/users/remvze/packages/container/package/moodist) instead, add the following configuration to your `vars.yml` file:
+
+```yaml
+moodist_container_image_self_build: false
+```
+
 ### Extending the configuration
 
 There are some additional things you may wish to configure about the component.

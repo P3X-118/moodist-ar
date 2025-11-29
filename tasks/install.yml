@@ -54,15 +54,37 @@
 - name: Run if self-building of Moodist container image is enabled
   when: "moodist_container_image_self_build | bool"
   block:
-    - name: Ensure Moodist repository is present on self-build
+    - name: Ensure Moodist repository is reset
+      # By fetching the repository, this task prevents the Docker image from being rebuilt
+      # due to the original Dockerfile being replaced with ours on every run.
       ansible.builtin.git:
         repo: "{{ moodist_container_image_self_build_repo }}"
         version: "{{ moodist_container_image_self_build_repo_version }}"
         dest: "{{ moodist_container_image_self_build_src_files_path }}"
         force: "yes"
+
+    - name: Ensure default Moodist repository is present on self-build
+      ansible.builtin.git:
+        repo: "{{ moodist_container_image_self_build_repo }}"
+        version: "{{ moodist_container_image_self_build_repo_version }}"
+        dest: "{{ moodist_container_image_self_build_src_files_path }}"
+        force: false
       register: moodist_git_pull_results
 
-    - name: Ensure Moodist container image is built
+    - name: Ensure Moodist file for building container image installed
+      ansible.builtin.template:
+        src: "{{ role_path }}/templates/{{ item }}.j2"
+        dest: "{{ moodist_container_image_self_build_src_files_path }}/{{ item }}"
+        mode: "0640"
+        owner: "{{ moodist_uid }}"
+        group: "{{ moodist_gid }}"
+        force: true # Overwrite the default Dockerfile at https://raw.githubusercontent.com/remvze/moodist/refs/heads/main/Dockerfile
+      with_items:
+        - .dockerignore
+        - Dockerfile
+      register: moodist_explorer_installation_dockerfile_results
+
+    - name: Ensure Moodist container image is built when Moodist repository is updated
       community.docker.docker_image:
         name: "{{ moodist_container_image_self_build_name }}"
         source: build

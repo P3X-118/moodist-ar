@@ -26,8 +26,10 @@ ExecStartPre={{ devture_systemd_docker_base_host_command_docker }} create \
       --name={{ moodist_identifier }} \
       --log-driver=none \
       --user={{ moodist_uid }}:{{ moodist_gid }} \
+      {% if moodist_container_image_self_build %}
       --cap-drop=ALL \
       --read-only \
+      {% endif %}
       --network={{ moodist_container_network }} \
       {% if moodist_container_http_host_bind_port %}
       -p {{ moodist_container_http_host_bind_port }}:{{ moodist_container_http_port }} \
