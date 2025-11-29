@@ -170,5 +170,9 @@ moodist_systemd_wanted_services_list_default: []
 moodist_systemd_wanted_services_list_auto: []
 moodist_systemd_wanted_services_list_custom: []
 
+moodist_environment_variables_server_log_level: info
+
+moodist_environment_variables_server_root: /public
+
 # Additional environment variables.
 moodist_environment_variables_additional_variables: ""

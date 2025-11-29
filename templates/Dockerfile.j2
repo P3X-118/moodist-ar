@@ -19,13 +19,8 @@ COPY . .
 RUN npm run build
 
 # Use a lighter base image for the production environment
-FROM node:lts-trixie-slim
+FROM joseluisq/static-web-server:latest
 
-COPY --from=build /app/dist /public
-
-# Install http-server for serving the page as non-root user
-RUN npm install -g http-server
+COPY --from=build /app/dist {{ moodist_environment_variables_server_root }}
 
 EXPOSE "{{ moodist_container_http_port }}"
-
-CMD ["http-server", "", "--port", "{{ radicle_explorer_container_http_port }}", "--gzip"]
