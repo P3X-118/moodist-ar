@@ -13,12 +13,14 @@
   with_items:
     - moodist_uid
     - moodist_gid
+    - moodist_hostname
+    - moodist_path_prefix
     - moodist_container_network
 
 - name: Run if Traefik is enabled
   when: moodist_container_labels_traefik_enabled | bool
   block:
-    - name: Fail if Traefik settings required for Wordpress are not defined
+    - name: Fail if Traefik settings required for Moodist are not defined
       ansible.builtin.fail:
         msg: >-
           You need to define a required configuration setting (`{{ item }}`).
@@ -26,6 +28,13 @@
       with_items:
         - moodist_container_labels_traefik_hostname
         - moodist_container_labels_traefik_path_prefix
+
+    - name: Fail if moodist_container_labels_traefik_path_prefix is different than /
+      ansible.builtin.fail:
+        msg: >-
+          moodist_container_labels_traefik_path_prefix (`{{ moodist_container_labels_traefik_path_prefix }}`) must be `/`.
+          moodist does not support hosting under a subpath yet.
+      when: "moodist_container_labels_traefik_path_prefix != '/'"
 
     # We ensure it doesn't end with a slash, because we handle both (slash and no-slash).
     # Knowing that `moodist_container_labels_traefik_path_prefix` does not end with a slash
