@@ -16,7 +16,7 @@ moodist_identifier: moodist
 moodist_base_path: "/{{ moodist_identifier }}"
 
 # renovate: datasource=docker depName=ghcr.io/remvze/moodist
-moodist_version: v2.1.0
+moodist_version: v2.4.0
 
 # The default Docker image requires root user
 moodist_uid: "{{ '' if moodist_container_image_self_build else '0' }}"
