@@ -54,24 +54,15 @@
 - name: Run if self-building of Moodist container image is enabled
   when: "moodist_container_image_self_build | bool"
   block:
-    - name: Ensure Moodist repository is reset
-      # By fetching the repository, this task prevents the Docker image from being rebuilt
-      # due to the original Dockerfile being replaced with ours on every run.
+    - name: Ensure Moodist repository is present on self-build
       ansible.builtin.git:
         repo: "{{ moodist_container_image_self_build_repo }}"
         version: "{{ moodist_container_image_self_build_repo_version }}"
         dest: "{{ moodist_container_image_self_build_src_files_path }}"
         force: "yes"
-
-    - name: Ensure default Moodist repository is present on self-build
-      ansible.builtin.git:
-        repo: "{{ moodist_container_image_self_build_repo }}"
-        version: "{{ moodist_container_image_self_build_repo_version }}"
-        dest: "{{ moodist_container_image_self_build_src_files_path }}"
-        force: false
       register: moodist_git_pull_results
 
-    - name: Ensure Moodist file for building container image installed
+    - name: Ensure Moodist files for building container image installed
       ansible.builtin.template:
         src: "{{ role_path }}/templates/{{ item }}.j2"
         dest: "{{ moodist_container_image_self_build_src_files_path }}/{{ item }}"
@@ -82,14 +73,18 @@
       with_items:
         - .dockerignore
         - Dockerfile
-      register: moodist_explorer_installation_dockerfile_results
 
-    - name: Ensure Moodist container image is built when Moodist repository is updated
+    - name: Check if Moodist container image exists
+      ansible.builtin.command: docker images -q "{{ moodist_container_image_self_build_name }}"
+      register: moodist_docker_image_exists
+      changed_when: false
+
+    - name: Ensure Moodist container image is built if the container image does not exist or the repository has been updated
       community.docker.docker_image:
         name: "{{ moodist_container_image_self_build_name }}"
         source: build
-        force_source: "{{ moodist_git_pull_results.changed if ansible_version.major > 2 or ansible_version.minor >= 8 else omit }}"
-        force: "{{ omit if ansible_version.major > 2 or ansible_version.minor >= 8 else moodist_git_pull_results.changed }}"
+        force_source: "{{ moodist_docker_image_exists.stdout == '' or (moodist_git_pull_results.before != moodist_git_pull_results.after) if ansible_version.major > 2 or ansible_version.minor >= 8 else omit }}"
+        force: "{{ omit if ansible_version.major > 2 or ansible_version.minor >= 8 else moodist_docker_image_exists.stdout == '' or (moodist_git_pull_results.before != moodist_git_pull_results.after) }}"
         build:
           dockerfile: Dockerfile
           path: "{{ moodist_container_image_self_build_src_files_path }}"
