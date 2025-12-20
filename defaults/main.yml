@@ -170,6 +170,9 @@ moodist_systemd_wanted_services_list_default: []
 moodist_systemd_wanted_services_list_auto: []
 moodist_systemd_wanted_services_list_custom: []
 
+# Specify the timezone
+moodist_environment_variables_tz: UTC
+
 moodist_environment_variables_server_log_level: info
 
 moodist_environment_variables_server_root: /public
