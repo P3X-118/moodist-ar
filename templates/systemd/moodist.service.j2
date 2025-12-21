@@ -39,6 +39,9 @@ ExecStartPre={{ devture_systemd_docker_base_host_command_docker }} create \
       {% for volume in moodist_container_additional_volumes %}
       --mount type={{ volume.type | default('bind' if '/' in volume.src else 'volume') }},src={{ volume.src }},dst={{ volume.dst }}{{ (',' + volume.options) if volume.options else '' }} \
       {% endfor %}
+      {% for arg in moodist_container_extra_arguments %}
+      {{ arg }} 
+      {% endfor %}
       {{ moodist_container_image_self_build_name if moodist_container_image_self_build else moodist_container_image }}
 
 {% for network in moodist_container_additional_networks %}
