@@ -74,7 +74,7 @@
         - .dockerignore
         - Dockerfile
 
-    - name: Check if Moodist container image exists
+    - name: Check if Moodist container image exists to avoid recreating the same one
       ansible.builtin.command: docker images -q "{{ moodist_container_image_self_build_name }}"
       register: moodist_docker_image_exists
       changed_when: false
