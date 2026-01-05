@@ -181,6 +181,8 @@ moodist_systemd_wanted_services_list_custom: []
 # Specify the timezone
 moodist_environment_variables_tz: UTC
 
+# Specify a logging level
+# Valid values: debug, error, info, trace, warn
 moodist_environment_variables_server_log_level: info
 
 moodist_environment_variables_server_root: /public
