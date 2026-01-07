@@ -108,11 +108,11 @@ moodist_container_labels_traefik_additional_response_headers_custom: {}
 #
 # Example:
 # moodist_container_labels_additional_labels_custom: |
-#   my.label=1
-#   another.label="here"
-moodist_container_labels_additional_labels: "{{ moodist_container_labels_additional_labels_auto | combine(moodist_container_labels_additional_labels_custom) }}"
-moodist_container_labels_additional_labels_auto: {}
-moodist_container_labels_additional_labels_custom: {}
+#   - my.label=1
+#   - another.label="here"
+moodist_container_labels_additional_labels: "{{ moodist_container_labels_additional_labels_auto + moodist_container_labels_additional_labels_custom }}"
+moodist_container_labels_additional_labels_auto: []
+moodist_container_labels_additional_labels_custom: []
 
 # A list of extra arguments to pass to the container (`docker create` command)
 moodist_container_extra_arguments: "{{ moodist_container_extra_arguments_auto + moodist_container_extra_arguments_custom }}"
