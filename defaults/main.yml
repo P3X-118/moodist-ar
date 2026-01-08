@@ -107,7 +107,7 @@ moodist_container_labels_traefik_additional_response_headers_custom: {}
 # To add your own custom labels, use `moodist_container_labels_additional_labels_custom`
 #
 # Example:
-# moodist_container_labels_additional_labels_custom: |
+# moodist_container_labels_additional_labels_custom:
 #   - my.label=1
 #   - another.label="here"
 moodist_container_labels_additional_labels: "{{ moodist_container_labels_additional_labels_auto + moodist_container_labels_additional_labels_custom }}"
