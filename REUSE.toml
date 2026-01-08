@@ -12,7 +12,6 @@ path = [
     ".github/workflows/pre-commit.yml",
     ".gitignore",
     ".pre-commit-config.yaml",
-    ".woodpecker.yml",
     ".yamllint.yml",
     "meta/main.yml"
 ]
