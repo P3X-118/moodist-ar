@@ -1,11 +1,11 @@
 # SPDX-FileCopyrightText: 2023-2025 Slavi Pantaleev
 # SPDX-FileCopyrightText: 2024 Julian-Samuel Gebühr
-# SPDX-FileCopyrightText: 2025 Suguru Hirahara
+# SPDX-FileCopyrightText: 2025, 2026 Suguru Hirahara
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
 ---
-- name: Ensure Moodist path exists
+- name: Ensure Moodist paths exist
   ansible.builtin.file:
     path: "{{ item }}"
     state: directory
@@ -14,6 +14,7 @@
     group: "{{ moodist_gid }}"
   with_items:
     - "{{ moodist_base_path }}"
+    - "{{ moodist_src_path }}"
 
 - name: Ensure Moodist support files installed
   ansible.builtin.template:
@@ -54,6 +55,17 @@
 - name: Run if self-building of Moodist container image is enabled
   when: "moodist_container_image_self_build | bool"
   block:
+    - name: Ensure Moodist custom source files are installed
+      ansible.builtin.template:
+        src: "{{ role_path }}/templates/src/{{ item }}.j2"
+        dest: "{{ moodist_src_path }}/{{ item }}"
+        mode: "0640"
+        owner: "{{ moodist_uid }}"
+        group: "{{ moodist_gid }}"
+      with_items:
+        - donate.tsx
+      register: moodist_installation_custom_results
+
     - name: Ensure Moodist repository is present on self-build
       ansible.builtin.git:
         repo: "{{ moodist_container_image_self_build_repo }}"
@@ -61,6 +73,19 @@
         dest: "{{ moodist_container_image_self_build_src_files_path }}"
         force: "yes"
       register: moodist_git_pull_results
+
+    - name: Ensure Moodist source files are replaced with the custom files
+      when: "moodist_container_image_self_build_custom | bool"
+      ansible.builtin.copy:
+        src: "{{ item.src }}"
+        dest: "{{ item.dest }}"
+        mode: "0644"
+        owner: root
+        group: root
+        force: true
+        remote_src: true
+      with_items:
+        - { src: "{{ moodist_src_path }}/donate.tsx", dest: "{{ moodist_container_image_self_build_src_files_path }}/src/components/categories/donate/donate.tsx" }
 
     - name: Ensure Moodist files for building container image installed
       ansible.builtin.template:
@@ -83,8 +108,8 @@
       community.docker.docker_image:
         name: "{{ moodist_container_image_self_build_name }}"
         source: build
-        force_source: "{{ moodist_docker_image_exists.stdout == '' or (moodist_git_pull_results.before != moodist_git_pull_results.after) if ansible_version.major > 2 or ansible_version.minor >= 8 else omit }}"
-        force: "{{ omit if ansible_version.major > 2 or ansible_version.minor >= 8 else moodist_docker_image_exists.stdout == '' or (moodist_git_pull_results.before != moodist_git_pull_results.after) }}"
+        force_source: "{{ moodist_docker_image_exists.stdout == '' or moodist_installation_custom_results.changed or (moodist_git_pull_results.before != moodist_git_pull_results.after) if ansible_version.major > 2 or ansible_version.minor >= 8 else omit }}"
+        force: "{{ omit if ansible_version.major > 2 or ansible_version.minor >= 8 else moodist_docker_image_exists.stdout == '' or moodist_installation_custom_results.changed or (moodist_git_pull_results.before != moodist_git_pull_results.after) }}"
         build:
           dockerfile: Dockerfile
           path: "{{ moodist_container_image_self_build_src_files_path }}"
