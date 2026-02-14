@@ -124,6 +124,7 @@
     name: "{{ moodist_container_network }}"
     driver: bridge
     driver_options: "{{ devture_systemd_docker_base_container_networks_driver_options }}"
+  register: moodist_network_creation_result
 
 - name: Ensure Moodist container network is created via ansible.builtin.command
   when: devture_systemd_docker_base_container_network_creation_method == 'command'
@@ -133,9 +134,9 @@
       {% if devture_systemd_docker_base_ipv6_enabled %}--ipv6{% endif %}
       {{ devture_systemd_docker_base_container_networks_driver_options_string }}
       {{ moodist_container_network }}
-  register: network_creation_result
-  changed_when: network_creation_result.rc == 0
-  failed_when: network_creation_result.rc != 0 and 'already exists' not in network_creation_result.stderr
+  register: moodist_network_creation_result
+  changed_when: moodist_network_creation_result.rc == 0
+  failed_when: moodist_network_creation_result.rc != 0 and 'already exists' not in moodist_network_creation_result.stderr
 
 - name: Ensure Moodist systemd service is present
   ansible.builtin.template:
