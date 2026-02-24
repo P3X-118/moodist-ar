@@ -1,9 +1,9 @@
 ---
 galaxy_info:
-  author: Suguru Hirahara
-  company: progressiv
+  author: Oneill
+  company: SGC
   role_name: moodist
-  namespace: progressiv
+  namespace: P3X-118
   description: Moodist
   platforms:
     - name: Debian
